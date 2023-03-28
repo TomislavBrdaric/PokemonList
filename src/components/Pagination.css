@@ -1,0 +1,16 @@
+.buttons {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 50px;
+}
+
+#nextBtn {
+    border-radius: 12px;
+    width: 100px;
+    height: 50px;
+}
+#previousBtn {
+    border-radius: 12px;
+    width: 100px;
+    height: 50px;
+}
