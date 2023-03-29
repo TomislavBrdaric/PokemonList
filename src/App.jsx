@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import './components/loading.style.css';
 import Pagination from './components/Pagination';
 
 function App() {
@@ -36,6 +37,27 @@ function App() {
     const goToPreviousPage = () => {
         setCurrentPage(prevPageUrl);
     };
+
+    if (loading)
+        return (
+            <div className='container'>
+                <h2 className='title'>Pokemon list</h2>
+                <div class='lds-spinner'>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        );
 
     return (
         <div className='container'>
