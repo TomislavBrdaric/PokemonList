@@ -1,11 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export default function PokemonList({ pokemon }) {
+import Pagination from './Pagination';
+import './PokemonList.css';
+import './loading.style.css';
+
+const PokemonList = () => {
+    const [pokemon, setPokemon] = useState([]);
+    const [currentPage, setCurrentPage] = useState(
+        'https://pokeapi.co/api/v2/pokemon'
+    );
+    const [nextPageUrl, setNextPageUrl] = useState([]);
+    const [prevPageUrl, setPrevPageUrl] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        let cancel;
+        axios
+            .get(currentPage, {
+                cancelToken: new axios.CancelToken((c) => (cancel = c)),
+            })
+            .then((res) => {
+                setLoading(false);
+                setNextPageUrl(res.data.next);
+                setPrevPageUrl(res.data.previous);
+                setPokemon(res.data.results);
+            });
+
+        return () => cancel();
+    }, [currentPage]);
+
+    const goToNextPage = () => {
+        setCurrentPage(nextPageUrl);
+    };
+
+    const goToPreviousPage = () => {
+        setCurrentPage(prevPageUrl);
+    };
+
+    if (loading)
+        return (
+            <div className='container'>
+                <h2 className='title'>Pokemon list</h2>
+                <div className='lds-spinner'>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        );
     return (
-        <div>
-            {pokemon.map((p) => (
-                <div key={{ p }}>{p}</div>
-            ))}
+        <div className='container'>
+            <h2 className='title'>Pokemon list</h2>
+            <ul className='pokemon-list'>
+                {pokemon.map((p) => (
+                    <li key={p.name} className='pokemon-item'>
+                        <h2 className='pokemon-name'>{p.name}</h2>
+                        <img
+                            className='pokemon-image'
+                            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                                p.url.split('/')[6]
+                            }.png`}
+                            alt={`${p.name} sprite`}
+                        />
+                    </li>
+                ))}
+            </ul>
+            <Pagination
+                goToNextPage={nextPageUrl ? goToNextPage : null}
+                goToPrevPage={prevPageUrl ? goToPreviousPage : null}
+            />
         </div>
     );
-}
+};
+
+export default PokemonList;
